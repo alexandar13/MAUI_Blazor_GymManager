@@ -1,0 +1,29 @@
+{
+  "runtime": "Net90",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "swagger.json",
+      "output": null,
+      "newLineBehavior": "Auto"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "GymManagerClient",
+      "namespace": "GymManager.Clients",
+      "output": "GymManagerClient.cs",
+      "generateClientClasses": true,
+      "generateDtoTypes": true,
+      "generateOptionalParameters": true,
+      "useHttpClientCreationMethod": true,
+      "injectHttpClient": true,
+      "generateResponseClasses": true,
+      "wrapDtoExceptions": true,
+      "clientBaseClass": null,
+      "configurationClass": null,
+      "useBaseUrl": true,
+      "generateBaseUrlProperty": true
+    }
+  }
+}
