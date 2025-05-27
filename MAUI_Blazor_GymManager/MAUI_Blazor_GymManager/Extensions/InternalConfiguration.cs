@@ -1,5 +1,6 @@
 ﻿using Clients;
-using MAUI_Blazor_GymManager.Components;
+using MAUI_Blazor_GymManager.Authentication.AuthHelper;
+using MAUI_Blazor_GymManager.Authentication.Token;
 using Refit;
 using Services;
 using Services.Interfaces;
@@ -13,6 +14,14 @@ namespace MAUI_Blazor_GymManager.Extensions
 {
     public static class InternalConfiguration
     {
+        public static void ConfigureAuth(this IServiceCollection services)
+        {
+            services.AddSingleton<ITokenStorage, SecureTokenStorage>();
+            services.AddSingleton<IAuthTokenStore, AuthTokenStore>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddTransient<AuthHandler>();
+        }
+
         public static void ConfigureInternalServices(this IServiceCollection services)
         {
             services.AddSingleton<INavigationService, NavigationService>();
@@ -20,12 +29,12 @@ namespace MAUI_Blazor_GymManager.Extensions
 
         public static void InitializeHttpClients(this IServiceCollection services)
         {
-            services.AddRefitClient<IUsersApi>().ConfigureHttpClient(c => //TODO: Token je hardkodiran. Treba se napraviti mehanizam za ubacivanje JWT-a u heder
-            {
-                c.BaseAddress = new Uri("http://192.168.1.5:5001");
-                c.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthdGFyaW5hLm0iLCJuYW1laWQiOiJhMWEzZTFmMC0wMDAxLTAwMDAtMDAwMC0wMDAwMDAwMDAwNzAiLCJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3NDgyOTM4MTIsImV4cCI6MTc0ODI5NzQxMiwiaWF0IjoxNzQ4MjkzODEyLCJpc3MiOiJHeW1NYW5hZ2VyQVBJIiwiYXVkIjoiR3ltTWFuYWdlck1BVUkifQ.W9HXdiHzPX8lWQJHuAImbRhZMuHGCpScF6WDo8Zdmto");
-                c.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-            });
+            services.AddRefitClient<IAuthApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"));
+
+            services.AddRefitClient<IUsersApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"))
+                .AddHttpMessageHandler<AuthHandler>();
         }
 
         public static void ConfigureNavigation(this IServiceProvider services)

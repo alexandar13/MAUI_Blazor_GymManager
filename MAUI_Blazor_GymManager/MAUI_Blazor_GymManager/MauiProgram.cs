@@ -18,7 +18,7 @@ namespace MAUI_Blazor_GymManager
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
-
+            builder.Services.ConfigureAuth();
             builder.Services.ConfigureInternalServices();
             builder.Services.InitializeHttpClients();
             builder.Services.AddMauiBlazorWebView();

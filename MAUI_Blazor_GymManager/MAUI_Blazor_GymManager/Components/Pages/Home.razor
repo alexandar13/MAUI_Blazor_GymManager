@@ -1,2 +1,15 @@
-﻿@page "/"
+﻿@page "/home"
+@inject NavigationManager Navigation
 
+<h3>Dobrodošao!</h3>
+
+<p>Uspešno si se prijavio.</p>
+
+<button @onclick="Logout">Odjavi se</button>
+
+@code {
+    private void Logout()
+    {
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}
