@@ -1,0 +1,69 @@
+﻿@page "/"
+@page "/login"
+@using Clients
+@using MAUI_Blazor_GymManager.Authentication.Token
+@inject NavigationManager Navigation
+@inject IAuthApi AuthApi
+@inject ITokenStorage TokenStorage
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div style="color: red;">@ErrorMessage</div>
+}
+
+<form @onsubmit="HandleLogin">
+    <div>
+        <label>Email:</label><br />
+        <input type="text" @bind="Username" />
+    </div>
+
+    <div style="margin-top: 10px;">
+        <label>Lozinka:</label><br />
+        <input type="password" @bind="Password" />
+    </div>
+
+    <div style="margin-top: 15px;">
+        <button type="submit">Prijavi se</button>
+    </div>
+</form>
+
+@code {
+    private string Username = string.Empty;
+    private string Password = string.Empty;
+    private string ErrorMessage;
+
+    private async Task HandleLogin()
+    {
+        ErrorMessage = string.Empty;
+
+        try
+        {
+            var response = await AuthApi.Login(new LoginRequest
+            {
+                Username = Username,
+                Password = Password
+            });
+
+            if (response.Data != null)
+            {
+                var token = response.Data;
+
+                // Čuvaj refresh token
+                await TokenStorage.SaveRefreshTokenAsync(token.RefreshToken);
+
+                // Redirektuj korisnika na početnu stranicu
+                Navigation.NavigateTo("/home", forceLoad: true);
+            }
+            else
+            {
+                ErrorMessage = "Neuspešna prijava. Proverite kredencijale.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Došlo je do greške pri prijavi.";
+        }
+    }
+}
