@@ -1,6 +1,8 @@
-﻿using Clients;
+﻿using Blazored.Toast;
+using Clients;
 using MAUI_Blazor_GymManager.Authentication.AuthHelper;
 using MAUI_Blazor_GymManager.Authentication.Token;
+using MAUI_Blazor_GymManager.Handlers;
 using Refit;
 using Services;
 using Services.Interfaces;
@@ -25,15 +27,20 @@ namespace MAUI_Blazor_GymManager.Extensions
         public static void ConfigureInternalServices(this IServiceCollection services)
         {
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddBlazoredToast();
+            services.AddScoped<INotificationService, BlazorNotificationService>();
+            services.AddTransient<ErrorHandlingHandler>();
         }
 
         public static void InitializeHttpClients(this IServiceCollection services)
         {
             services.AddRefitClient<IAuthApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"))
+                .AddHttpMessageHandler<ErrorHandlingHandler>();
 
             services.AddRefitClient<IUsersApi>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"))
+                .AddHttpMessageHandler<ErrorHandlingHandler>()
                 .AddHttpMessageHandler<AuthHandler>();
         }
 

@@ -1,8 +1,9 @@
-﻿using MAUI_Blazor_GymManager.Authentication.Token;
+﻿using MAUI_Blazor_GymManager.Authentication.AuthHelper;
+using MAUI_Blazor_GymManager.Authentication.Token;
 using Microsoft.Net.Http.Headers;
 using System.Net;
 
-namespace MAUI_Blazor_GymManager.Authentication.AuthHelper
+namespace MAUI_Blazor_GymManager.Handlers
 {
     public class AuthHandler(ITokenService tokenService,
                              IAuthTokenStore authTokenStore) : DelegatingHandler

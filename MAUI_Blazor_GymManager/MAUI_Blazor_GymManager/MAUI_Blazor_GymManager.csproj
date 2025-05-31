@@ -66,10 +66,12 @@
 
     <ItemGroup>
         <PackageReference Include="Camera.MAUI" Version="1.4.4" />
+        <PackageReference Include="GymManagerShared" Version="1.0.10" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
         <PackageReference Include="Microsoft.Net.Http.Headers" Version="9.0.5" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Refit" Version="8.0.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     </ItemGroup>

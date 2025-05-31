@@ -39,7 +39,7 @@ namespace Clients
         /// </exception>
         [Headers("Accept: text/plain, application/json, text/json", "Content-Type: application/json")]
         [Post("/api/Auth/login")]
-        Task<TokenResponseApiResponse> Login([Body] LoginRequest body);
+        Task<GymManagerShared.Models.Responses.Shared.ApiResponse<TokenResponse>> Login([Body] LoginRequest body);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">
