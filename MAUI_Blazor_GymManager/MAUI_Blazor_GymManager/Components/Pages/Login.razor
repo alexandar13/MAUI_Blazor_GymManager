@@ -6,7 +6,6 @@
 @inject NavigationManager Navigation
 @inject IAuthApi AuthApi
 @inject ITokenStorage TokenStorage
-@inject INotificationService NotificationService
 
 
 <h3>Login</h3>
@@ -33,12 +32,13 @@
 
     private async Task HandleLogin()
     {
-
+        try
+        {
             var response = await AuthApi.Login(new LoginRequest
-                {
-                    Username = Username,
-                    Password = Password
-                });
+            {
+                Username = Username,
+                Password = Password
+            });
 
             if (response.Data != null)
             {
@@ -50,5 +50,10 @@
                 // Redirektuj korisnika na početnu stranicu
                 Navigation.NavigateTo("/home", forceLoad: true);
             }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }

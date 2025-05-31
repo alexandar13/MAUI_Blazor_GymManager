@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Toolbelt.Blazor;
 
 namespace MAUI_Blazor_GymManager.Extensions
 {
@@ -28,18 +30,24 @@ namespace MAUI_Blazor_GymManager.Extensions
         {
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddBlazoredToast();
-            services.AddScoped<INotificationService, BlazorNotificationService>();
+            services.AddSingleton<NotificationService>();
             services.AddTransient<ErrorHandlingHandler>();
         }
 
         public static void InitializeHttpClients(this IServiceCollection services)
         {
+            services.AddHttpClientInterceptor();
+            services.AddScoped<GlobalHttpInterceptor>();
+
             services.AddRefitClient<IAuthApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"))
-                .AddHttpMessageHandler<ErrorHandlingHandler>();
+                .ConfigureHttpClient((serviceProvider, client) =>
+                {
+                    client.BaseAddress = new Uri("http://192.168.0.4:5001");
+                    client.EnableIntercept(serviceProvider);  // ovde prosleđuješ serviceProvider
+                });
 
             services.AddRefitClient<IUsersApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.1.5:5001"))
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://192.168.0.4:5001"))
                 .AddHttpMessageHandler<ErrorHandlingHandler>()
                 .AddHttpMessageHandler<AuthHandler>();
         }

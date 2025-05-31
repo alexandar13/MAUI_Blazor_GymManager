@@ -74,6 +74,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Refit" Version="8.0.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+        <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,11 @@
 ﻿@inherits LayoutComponentBase
 @using Blazored.Toast.Configuration
+@using Services
+@using Toolbelt.Blazor
+@inject NotificationService NotificationService
+@inject Blazored.Toast.Services.IToastService ToastService
+@inject GlobalHttpInterceptor HttpInterceptor
+
 
 <BlazoredToasts Position="ToastPosition.TopCenter"/>
 
@@ -8,3 +14,34 @@
     <BottomNav />
 </div>
 
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        NotificationService.OnShowMessage += ShowToast;
+        HttpInterceptor.MonitorEvent();
+    }
+
+    private void ShowToast(NotificationMessage notification)
+    {
+        switch (notification.Type)
+        {
+            case NotificationType.Info:
+                ToastService.ShowInfo(notification.Message);
+                break;
+            case NotificationType.Success:
+                ToastService.ShowSuccess(notification.Message);
+                break;
+            case NotificationType.Error:
+                ToastService.ShowError(notification.Message);
+                break;
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        NotificationService.OnShowMessage -= ShowToast;
+    }
+}

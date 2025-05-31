@@ -1,21 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
-using Services.Interfaces;
-using System;
+using Services;
 using System.Net;
-using System.Net.Sockets;
 namespace MAUI_Blazor_GymManager.Handlers
 {
-    public class ErrorHandlingHandler (IServiceProvider serviceProvider) : DelegatingHandler
+    public class ErrorHandlingHandler (NotificationService notificationService, IServiceProvider serviceProvider) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var notificationService = serviceProvider.GetRequiredService<INotificationService>();
             var nav = serviceProvider.GetRequiredService<NavigationManager>();
 
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
-                await notificationService.ShowError("Internet konekcija nije dostupna.");
+                notificationService.ShowMessage("Internet konekcija nije dostupna.", NotificationType.Error);
                 return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
                 {
                     Content = new StringContent("Internet nije dostupan.")
@@ -31,8 +28,7 @@ namespace MAUI_Blazor_GymManager.Handlers
             catch (Exception)
             {
                 // Kada API nije dostupan udje ovde
-
-                await notificationService.ShowError("Greška prilikom slanja zahteva.");
+                notificationService.ShowMessage("Greška prilikom slanja zahteva.", NotificationType.Error);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError)
                 {
                     Content = new StringContent("Greška prilikom slanja zahteva.")
@@ -49,26 +45,21 @@ namespace MAUI_Blazor_GymManager.Handlers
 
                     var error = errorResponse?.Errors?.FirstOrDefault();
                     if (error != null)
-                        await notificationService.ShowError(error.Message ?? $"Greška: {error.ErrorCode}");
+                        notificationService.ShowMessage(error.Message ?? $"Greška: {error.ErrorCode}", NotificationType.Error);
                     else
-                        await notificationService.ShowError("Greška sa servera.");
-
-                    // You can use other status codes, such as HttpStatusCode.GatewayTimeout etc.
-                    return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
-                    {
-                        Content = new StringContent("exception"),
-                        RequestMessage = request,
-                    };
+                        notificationService.ShowMessage("Greška sa servera.", NotificationType.Error);
                 }
                 catch
                 {
-                    await notificationService.ShowError("Neočekivana greška u obradi odgovora.");
+                    notificationService.ShowMessage("Neočekivana greška u obradi odgovora.", NotificationType.Error);
                 }
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     nav.NavigateTo("/login", forceLoad: true);
                 }
+
+                return null;
             }
 
             return response;
